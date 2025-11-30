@@ -1,13 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).end();
-  try {
-    const body = req.body;
-    // handle request logic...
-    res.status(200).json({ ok: true, received: body });
-  } catch (err) {
-    console.error("pages api error:", err);
-    res.status(500).json({ error: "server error" });
-  }
+export async function POST(req: Request) {
+  console.log("[/api/chat] POST invoked");
+  const body = await req.json().catch(() => ({}));
+  console.log("[/api/chat] body:", JSON.stringify(body));
+
+  return NextResponse.json({
+    ok: true,
+    echo: body,
+    message: "server received request",
+  });
+}
+
+export async function GET() {
+  return NextResponse.json({ ok: true, message: "chat route ok" });
 }
