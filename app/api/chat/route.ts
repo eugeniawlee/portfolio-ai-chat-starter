@@ -1,14 +1,25 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  console.log("[/api/chat] POST invoked");
-  const body = await req.json().catch(() => ({}));
-  console.log("[/api/chat] body:", JSON.stringify(body));
+  // 1) Simple sanity logs
+  console.log("[/api/chat] TEST POST invoked - immediate response");
 
-  return NextResponse.json({
-    ok: true,
-    echo: body,
-    message: "server received request",
+  // 2) Read but ignore body so we confirm request routing works
+  try {
+    const _body = await req.text().catch(() => "");
+    console.log("[/api/chat] raw body length:", _body.length);
+  } catch (err) {
+    console.warn("[/api/chat] error reading body:", err);
+  }
+
+  // 3) Return an explicit JSON with Content-Type and Content-Length hints
+  const payload = { ok: true, message: "immediate test response", time: Date.now() };
+  return new Response(JSON.stringify(payload), {
+    status: 200,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "x-test-response": "immediate",
+    },
   });
 }
 
